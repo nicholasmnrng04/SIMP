@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+data/
+storage/
+.tmp/
+coverage/
+test-results/
+*.log

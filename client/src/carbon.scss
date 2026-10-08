@@ -1,0 +1,10 @@
+// Only the Carbon components used by the SIMP compatibility layer.
+// Keeping this list explicit prevents the entire Carbon catalogue from
+// becoming part of the prototype bundle while pages are migrated in stages.
+@use '@carbon/react/scss/components/button';
+@use '@carbon/react/scss/components/inline-loading';
+@use '@carbon/react/scss/components/modal';
+@use '@carbon/react/scss/components/notification';
+@use '@carbon/react/scss/components/skeleton-styles';
+@use '@carbon/react/scss/components/tag';
+@use '@carbon/react/scss/components/tile';

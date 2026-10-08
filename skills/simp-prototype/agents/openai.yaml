@@ -1,0 +1,4 @@
+interface:
+  display_name: "SIMP Prototype"
+  short_description: "Bangun prototype SIMP bertahap sesuai PRD"
+  default_prompt: "Gunakan $simp-prototype untuk membaca prd.md dan docs/progress.md, lalu kerjakan tahap berikutnya pada docs/implementation-plan.md sampai kriteria tahap terpenuhi."

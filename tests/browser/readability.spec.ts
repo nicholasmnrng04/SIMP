@@ -1,0 +1,72 @@
+import { test, expect } from '@playwright/test';
+
+test('tampilan ringkas menjaga filter, angka API, konteks pekerjaan dan keterbacaan', async ({ page }, info) => {
+  test.setTimeout(120000);
+  await page.goto('/masuk');
+  await page.getByLabel('Email', { exact: true }).fill('team_leader@example.test');
+  await page.getByLabel('Kata sandi', { exact: true }).fill(process.env.SIMP_TEST_PASSWORD!);
+  await page.getByRole('button', { name: 'Masuk', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Proyek Anda', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Yang perlu ditindaklanjuti' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Grafik Rencana Awal, Rencana Terbaru dan Capaian' })).toBeVisible();
+  const projects = await (await page.request.get('/api/projects?q=BROWSER-SEED')).json();
+  const project = projects.projects[0];
+  const root = `/proyek/${project.id}`;
+  const before = await (await page.request.get(`/api/projects/${project.id}/monitoring`)).json();
+  await page.goto(root);
+  await expect(page.getByRole('heading', { name: 'Kemajuan per pekerjaan' })).toBeVisible();
+  await expect(page.getByLabel('Sampai tanggal', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Pekerjaan sedang berjalan', exact: true })).toBeVisible();
+  await page.getByLabel('Cari uraian pekerjaan', { exact: true }).fill('Item Awal');
+  await expect(page.locator('.work-progress-table')).toContainText('Kelompok Awal Uji');
+  await expect(page.locator('.work-progress-table')).toContainText('Item Awal Uji');
+  await expect(page.locator('.work-progress-table .work-group-row')).toContainText('Kontribusi terhadap proyek');
+  expect(await page.evaluate(() => ({ width: innerWidth, documentWidth: document.documentElement.scrollWidth }))).toEqual({ width: page.viewportSize()!.width, documentWidth: page.viewportSize()!.width });
+  await page.getByRole('button', { name: 'Grafik rencana dan capaian' }).click();
+  await expect(page).toHaveURL(/display=curve/);
+  await page.reload();
+  await expect(page.getByRole('img', { name: 'Grafik Rencana Awal, Rencana Terbaru dan Capaian' })).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Tabel pekerjaan' }).click();
+  await page.goBack();
+  await expect(page.getByRole('button', { name: 'Grafik rencana dan capaian' })).toHaveAttribute('aria-pressed', 'true');
+  for (const width of [1440, 768, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(page.getByRole('heading', { name: 'Ringkasan proyek', exact: true })).toHaveCSS('font-size', width <= 720 ? '22px' : '24px');
+    await expect(page.getByLabel('Sampai tanggal', { exact: true })).toHaveCSS('font-size', width <= 720 ? '16px' : '14px');
+    if (width === 390) {
+      const menu = page.getByRole('button', { name: 'Buka navigasi', exact: true });
+      await menu.click();
+      await expect(page.getByRole('button', { name: 'Tutup menu', exact: true })).toBeFocused();
+      await expect(page.getByRole('navigation', { name: 'Bagian proyek' }).getByRole('link')).toHaveCount(8);
+      await page.screenshot({ path: info.outputPath('menu-hp.png') });
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeFocused();
+    }
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: info.outputPath(`kurva-${width}.png`), fullPage: true });
+    await page.goto('/ringkasan');
+    await expect(page.getByRole('heading', { name: 'Pemantauan proyek' })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: info.outputPath(`beranda-${width}.png`), fullPage: true });
+    await page.goto(`${root}?display=curve`);
+    await expect(page.getByRole('img', { name: 'Grafik Rencana Awal, Rencana Terbaru dan Capaian' })).toBeVisible();
+  }
+  await page.goto(`${root}/pekerjaan`);
+  await page.getByLabel('Cari pekerjaan', { exact: true }).fill('Item Awal');
+  await expect(page.locator('.work-items-table')).toContainText('Kelompok Awal Uji');
+  await expect(page.getByLabel('Cari pekerjaan', { exact: true })).toHaveCSS('font-size', '16px');
+  await page.getByLabel('Cari pekerjaan', { exact: true }).fill('tidak cocok');
+  await expect(page.locator('.work-list-filters').getByRole('status')).toContainText('0 pekerjaan ditampilkan');
+  await page.getByRole('button', { name: 'Bersihkan pencarian' }).click();
+  await expect(page.locator('.work-items-table')).toContainText('Item Awal Uji');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.evaluate(() => { document.documentElement.style.zoom = '2'; });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: info.outputPath('pekerjaan-zoom-200.png'), fullPage: true });
+  await page.evaluate(() => { document.documentElement.style.zoom = ''; });
+  const after = await (await page.request.get(`/api/projects/${project.id}/monitoring`)).json();
+  expect(after.progress.total).toEqual(before.progress.total);
+  expect(after.progress.items).toEqual(before.progress.items);
+});

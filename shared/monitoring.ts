@@ -1,0 +1,36 @@
+import { z } from 'zod';
+import { dateSchema, type Project } from './projects.js';
+import type { ProgressResult } from './progress.js';
+export const monitoringQuery = z.object({ cutoff: dateSchema.optional(), type: z.enum(['WEEKLY','MONTHLY'], { error: 'Pilih periode mingguan atau bulanan.' }).default('WEEKLY'), planVersionId: z.string().uuid('Pilih versi rencana yang valid.').optional() }).strict();
+export const galleryQuery = z.object({ from: dateSchema.optional(), to: dateSchema.optional(), workItemId: z.string().uuid('Pilih pekerjaan yang valid.').optional(), reportId: z.string().uuid('Pilih laporan yang valid.').optional(), uploadedBy: z.string().uuid('Pilih pengunggah yang valid.').optional() }).strict().refine(v => !v.from || !v.to || v.from <= v.to, 'Tanggal akhir tidak boleh sebelum tanggal awal.');
+export type Gallery = { photos: { id: string; url: string; caption: string; location: string; date: string; activity: string; workName: string; workItemId: string | null; reportId: string; reportNumber: string; revision: number; uploadedBy: string; uploader: string; status: string }[] };
+export type HistoryEntry = { id: string; date: string; actor: string; action: string; note: string; status: string | null; url: string | null };
+export type Curve = { baseline: string | null; comparison: string | null; comparisonEffective: string | null; points: { date: string; baseline: string | null; latest: string | null; actual: string | null }[] };
+export type Monitoring = { progress: ProgressResult; curve: Curve; day: number; remainingDays: number; scheduleEnd: string; contractValue: string; ongoing: string[];
+  reports: { id: string; number: string; date: string; status: string }[];
+  problems: { reportId: string; problem: string; status: string; date: string }[];
+  notes: { reportId: string; note: string; actor: string; date: string }[];
+};
+export type DashboardProjectSummary = {
+  projectId: string;
+  progressState: ProgressResult['state'];
+  cutoff: string;
+  calculatedAt: string;
+  effectivePlanId: string | null;
+  target: string | null;
+  actual: string | null;
+  deviation: string | null;
+  reportsToday: number;
+  pendingReviews: number;
+  needsRevision: number;
+  drafts: number;
+  openProblems: number;
+  lastActivityAt: string | null;
+};
+export type Dashboard = {
+  projects: Project[];
+  projectSummaries: DashboardProjectSummary[];
+  users: number | null;
+  counts: { projects: number; active: number; inProgress: number; delayed: number; completed: number; pending: number; drafts: number; changes: number };
+  activity: HistoryEntry[];
+};

@@ -1,0 +1,19 @@
+.report-editor fieldset, .report-row fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.report-part { margin: 24px 0; }
+.report-row { padding: 22px; margin: 18px 0; border: 1px solid #dce3dc; border-radius: 12px; background: #f8faf7; min-width: 0; overflow-wrap: anywhere; }
+.report-row p, .report-gallery p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.report-remove { margin-top: 18px; display: block; }
+.report-editor .form-actions { flex-wrap: wrap; }
+.report-gallery { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 20px; }
+.report-gallery figure { margin: 0; min-width: 0; }
+.report-gallery img { width: 100%; aspect-ratio: 16 / 9; max-height: 360px; object-fit: contain; border-radius: 10px; background: #edf3e9; }
+.report-gallery figcaption { padding: 14px 0; overflow-wrap: anywhere; }
+.report-gallery button { display: block; margin-top: 12px; }
+.report-row input[type=file] { width: 100%; min-width: 0; }
+.report-review { overflow-wrap: anywhere; }
+.report-review fieldset { border: 0; margin: 20px 0; padding: 0; min-width: 0; }
+.report-review .form-actions { flex-wrap: wrap; }
+.report-review p { white-space: pre-wrap; }
+.report-review li { display: block; margin: 12px 0; }
+.report-review li a { white-space: nowrap; }
+@media(max-width:720px) { .report-row { padding: 15px; } .report-gallery { grid-template-columns: 1fr; } .report-part .section-heading { flex-wrap: wrap; gap: 12px; } }

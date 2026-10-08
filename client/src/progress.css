@@ -1,0 +1,4 @@
+.progress-table { max-width: 100%; overflow-x: auto; }
+.progress-table table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.progress-table th, .progress-table td { padding: .7rem; text-align: left; border-bottom: 1px solid #dce5df; white-space: nowrap; }
+.progress-table th { font-weight: 600; }

@@ -1,0 +1,12 @@
+.monitor-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin: 20px 0; }
+.monitor-cards article { background: white; border: 1px solid #dce5df; border-radius: 12px; padding: 16px; }
+.monitor-cards strong { display: block; font-size: 1.4rem; margin-top: 12px; }
+.curve-scroll { max-width: 100%; overflow-x: auto; }
+.progress-curve { display: block; width: 100%; min-width: 640px; height: auto; }
+.progress-curve text { font-size: 13px; fill: #324a45; }
+.curve-legend { display: flex; flex-wrap: wrap; gap: 12px; font-weight: 600; }
+.monitor-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.monitor-gallery figure { margin: 0; padding: 12px; border: 1px solid #dce5df; border-radius: 12px; background: white; min-width: 0; }
+.monitor-gallery img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+.monitor-gallery figcaption, .history-event { overflow-wrap: anywhere; }
+.history-event { padding: 16px 0; border-bottom: 1px solid #dce5df; }

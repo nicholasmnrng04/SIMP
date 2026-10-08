@@ -1,0 +1,62 @@
+.workspace-main { width: 100%; max-width: 1440px; margin-inline: auto; }
+.workspace-main h1 { font-size: clamp(24px, 3vw, 32px); letter-spacing: -.6px; }
+.workspace-main p, .workspace-main li { line-height: 1.65; }
+.project-context { background: white; border: 1px solid #dce5df; border-radius: 14px; padding: 20px 24px 0; margin-bottom: 20px; }
+.breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #526b62; margin-bottom: 16px; }
+.breadcrumbs a { color: inherit; overflow-wrap: anywhere; }
+.project-name { font-weight: 750; font-size: 21px; margin: 0; overflow-wrap: anywhere; }
+.project-navigation, .section-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.project-navigation { margin-top: 20px; }
+.project-navigation a, .section-tabs a { display: flex; align-items: center; min-height: 46px; padding: 10px 14px; text-decoration: none; color: #50665d; border-bottom: 3px solid transparent; }
+.project-navigation a[aria-current], .section-tabs a[aria-current] { color: #124b43; border-color: #18745f; font-weight: 700; background: #eff6f2; }
+.section-tabs { margin-bottom: 24px; }
+.project-navigation-mobile { display: none; }
+.project-content > .back-link { display: inline-block; margin-bottom: 16px; }
+.next-action { border-left: 4px solid #18745f; background: #eff6f2; padding: 20px; border-radius: 10px; margin: 18px 0; }
+.next-action h2, .next-action h3 { margin-top: 0; }
+.disclosure { border: 1px solid #dce5df; border-radius: 10px; background: white; margin: 16px 0; padding: 0 18px; }
+.disclosure > summary { padding: 16px 0; font-weight: 650; cursor: pointer; line-height: 1.5; }
+.disclosure[open] { padding-bottom: 18px; }
+.disclosure > .form-grid { padding-top: 12px; }
+summary { cursor: pointer; min-height: 44px; padding-block: 10px; }
+.compact-work-summary { display: inline; }
+.compact-work-summary small { display: block; font-weight: 400; margin: 6px 0 0 20px; }
+.workflow-steps { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; margin: 18px 0; counter-reset: steps; }
+.workflow-steps li { padding: 9px 12px; background: #f0f3f0; border-radius: 8px; font-size: 13px; color: #53685e; }
+.workflow-steps li[aria-current] { color: #124b43; background: #deeee3; font-weight: 700; }
+.workflow-steps li::before { counter-increment: steps; content: counter(steps) '. '; }
+.report-task-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-block: 16px; }
+.report-review { scroll-margin-top: 24px; }
+.project-content, .project-content section, .project-content article, .project-content form, .project-content fieldset { min-width: 0; }
+.project-content a, .project-content h2, .project-content h3, .project-content dd { overflow-wrap: anywhere; }
+.project-content .progress-table { width: 100%; max-width: 100%; }
+.project-content .workbook-preview { margin: 16px 0; min-width: 0; }
+.report-read-table td { vertical-align: top; }
+.filter-context { color: #53685e; font-size: 14px; }
+.workspace :focus-visible { outline: 3px solid #287cbb; outline-offset: 3px; }
+.workspace .monitor-cards { margin: 20px 0; }
+.workspace .monitor-cards strong { overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  .workspace-main { padding: 20px 14px; }
+  .workspace-header { min-height: 68px; padding: 12px 16px; }
+  .project-context { padding: 16px; }
+  .project-navigation { display: none; }
+  .project-navigation-mobile { display: block; font-size: 13px; font-weight: 650; margin-top: 16px; }
+  .project-navigation-mobile select { margin-top: 8px; }
+  .project-context .section-heading { align-items: start; }
+  .project-name { font-size: 18px; }
+  .breadcrumbs { font-size: 12px; }
+  .workspace .monitor-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .workspace .monitor-cards article { padding: 14px; }
+  .workspace .monitor-cards strong { font-size: 1.15rem; }
+  .disclosure { padding-inline: 14px; }
+  .workspace .form-actions { gap: 10px; }
+  .workspace button, .workspace .button { min-height: 44px; }
+  .project-content .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .project-content .inline-actions { flex-wrap: wrap; }
+  .report-read-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .report-read-table, .report-read-table tbody, .report-read-table tr, .report-read-table td { display: block; min-width: 0; width: 100%; }
+  .report-read-table tr { padding: 14px 0; border-bottom: 1px solid #dce5df; }
+  .report-read-table td { border: 0; padding: 5px 0; overflow-wrap: anywhere; }
+  .report-read-table td::before { content: attr(data-label); display: block; font-weight: 650; font-size: 12px; color: #53685e; }
+}

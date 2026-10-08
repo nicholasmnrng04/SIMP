@@ -1,0 +1,60 @@
+{
+  "name": "simp-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0 <25",
+    "npm": ">=11 <12"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others -n api,web \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --env-file-if-exists=.env --import tsx --watch server/index.ts",
+    "dev:client": "vite --host 127.0.0.1",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx server/cli/migrate.ts",
+    "db:bootstrap": "node --env-file-if-exists=.env --import tsx server/cli/bootstrap.ts",
+    "db:demo:migrate": "node --env-file=.env.demo dist/server/cli/demo-setup.js migrate",
+    "db:demo:inspect": "node --env-file=.env.demo dist/server/cli/demo-setup.js inspect",
+    "db:demo:bootstrap": "node --env-file=.env.demo dist/server/cli/demo-setup.js bootstrap",
+    "db:demo:set-password": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-demo-password.ps1",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.server.json --noEmit",
+    "build": "npm run typecheck && vite build && tsc -p tsconfig.server.json && node scripts/copy-migrations.mjs",
+    "start": "node --env-file-if-exists=.env dist/server/index.js",
+    "test": "node --env-file-if-exists=.env --import tsx --test tests/*.test.ts",
+    "test:smoke": "node --env-file-if-exists=.env scripts/smoke.mjs",
+    "test:ui": "node --env-file-if-exists=.env --import tsx scripts/browser-test.ts",
+    "db:local:up": "node scripts/postgres-local.mjs up",
+    "db:local:down": "node scripts/postgres-local.mjs down",
+    "db:local:status": "node scripts/postgres-local.mjs status"
+  },
+  "dependencies": {
+    "@carbon/react": "1.117.0",
+    "@fastify/cookie": "11.1.2",
+    "@fastify/rate-limit": "11.2.0",
+    "@fastify/static": "10.1.5",
+    "@fontsource/noto-sans": "5.3.0",
+    "exceljs": "4.4.0",
+    "fastify": "5.12.5",
+    "pdfkit": "0.20.2",
+    "pg": "8.23.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "0.35.5",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.0",
+    "@types/pdfkit": "0.17.6",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "concurrently": "9.2.4",
+    "pdf-lib": "1.17.1",
+    "sass": "1.105.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "8.3.1"
+  }
+}
