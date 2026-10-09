@@ -33,7 +33,7 @@ Pastikan perubahan kode ini telah diunggah ke repository Git yang akan dihubungk
 | `SUPABASE_STORAGE_BUCKET` | `simp-report-photos` |
 | `LOG_LEVEL` | `info` |
 
-Atur variabel untuk environment Vercel yang hendak dipakai. **Preview** dapat mempunyai domain berbeda; tambahkan domain preview yang memang diuji ke `APP_ORIGINS`, atau gunakan domain demo tetap agar login melalui cookie berhasil. Setelah mengubah Environment Variables, buat deployment baru agar nilai terbaru dipakai. Jangan memakai awalan `VITE_` untuk password, URL database, atau secret key karena itu dapat masuk ke bundle browser.
+Atur variabel untuk environment Vercel yang hendak dipakai. Untuk domain demo saat ini, set `APP_ORIGINS=https://simp-eight.vercel.app` persis tanpa tanda kutip atau garis miring di akhir. Jika respons login `403 INVALID_ORIGIN` padahal `/api/health` sudah 200, periksa nilai ini pada environment **Production**. **Preview** dapat mempunyai domain berbeda; tambahkan domain preview yang memang diuji ke `APP_ORIGINS`, atau gunakan domain demo tetap agar login melalui cookie berhasil. Setelah mengubah Environment Variables, buat deployment baru agar nilai terbaru dipakai. Jangan memakai awalan `VITE_` untuk password, URL database, atau secret key karena itu dapat masuk ke bundle browser.
 
 `DEMO_DATABASE_URL`, `DEMO_DB_SESSION_HOST`, dan `BOOTSTRAP_ADMIN_*` hanya untuk CLI lokal; jangan masukkan ke Vercel. Sertifikat asli `.crt` juga tidak perlu diunggah sebagai file karena Function memakai `DATABASE_CA_BASE64`.
 
@@ -42,6 +42,8 @@ Atur variabel untuk environment Vercel yang hendak dipakai. **Preview** dapat me
 Sesudah variabel lengkap, deploy proyek. Buka `https://<domain-demo>/api/health`; respons siap harus berstatus **200**. Buka `https://<domain-demo>/api/auth/me` tanpa login; **401** adalah respons yang benar dan membuktikan API terjangkau. Kemudian masuk dengan akun Administrator demo, buat satu proyek melalui UI, dan buat akun role lain sesuai kebutuhan.
 
 Sebelum membagikan demo, periksa login dan hak akses lima role, laporan Inspector dan foto, pemeriksaan Engineer, persetujuan Team Leader, kemajuan, PDF/Excel, refresh pada URL halaman dalam, serta tampilan HP. Periksa khusus satu unggahan foto besar dan satu ekspor dengan data realistis. **PDF/Excel yang lebih besar dari batas respons Vercel 4,5 MB mungkin belum dapat diunduh melalui Function**; jika itu terjadi, perlu mekanisme unduhan lain sebelum memakai dataset besar. Jangan mengubah izin bucket menjadi public untuk mengatasi masalah unduhan.
+
+Jika kata sandi satu-satunya Administrator demo terlupa, jalankan `npm.cmd run db:demo:reset-admin` dari workspace yang memiliki `.env.demo` dan sertifikat CA. Perintah ini hanya menerima database Supabase demo, membuat kata sandi acak, mengakhiri sesi lama, dan menyimpan kredensial baru di `.tmp/admin-demo-login.txt` yang diabaikan Git. Buka berkas tersebut secara lokal, masuk melalui domain utama, ganti kata sandi lewat menu **Pengguna**, lalu hapus berkasnya. Jangan kirim kata sandi melalui chat atau commit.
 
 ## Validasi lokal yang sudah dilakukan
 
