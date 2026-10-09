@@ -221,7 +221,7 @@ test('T06 migration dari T05 mempertahankan identitas, isian dan foto serta memi
   assert.equal(await migrate(db,through007),1);
   const oldHistory=(await db.query('SELECT * FROM schema_migrations ORDER BY name')).rows;
   assert.equal(oldHistory.at(-1).checksum,'4ae65c6756fcf69b075431ceb95156e9aa19129f2013fcfeac1098022f1cdc18');
-  assert.equal(await migrate(db),3);assert.equal(await migrate(db),0);
+  assert.equal(await migrate(db),4);assert.equal(await migrate(db),0);
   assert.deepEqual((await db.query('SELECT * FROM schema_migrations ORDER BY name')).rows.slice(0,7),oldHistory);
   const after=(await db.query('SELECT * FROM daily_reports WHERE id=$1',[reportId])).rows[0];for(const key of Object.keys(before))assert.deepEqual(after[key],before[key]);
   const report=await getReport(db,ids.OWNER,project.id,reportId);assert.equal(report.revision,1);assert.equal(report.logicalId,reportId);assert.equal(report.isAuthoritative,true);assert.equal(report.activities[0].id,activityId);assert.equal(report.photos[0].id,photoId);
@@ -393,7 +393,7 @@ test('T08 minggu/bulan lintas batas, bulan parsial, periode kosong dan angka sam
 test('rekap historis memakai aturan minggu versi lama dan rekap baru memakai Senin-Minggu',async t=>{
  const f=await setup(t,true,false,'2026-10-14'),{db,ids,project,item}=f;
  // Rencana Awal dibuat pada schema historis; migration mengisinya sebagai PROJECT_START.
- assert.equal(await migrate(db),4);
+ assert.equal(await migrate(db),5);
  const initial=await planContext(db,ids.TEAM_LEADER,project.id),baseline=initial.versions[0];
  assert.equal(baseline.weekConvention,'PROJECT_START');
  const context=await planContext(db,ids.TEAM_LEADER,project.id);

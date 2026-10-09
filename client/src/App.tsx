@@ -5,6 +5,8 @@ import Logout from '@carbon/icons-react/es/Logout.js';
 import Menu from '@carbon/icons-react/es/Menu.js';
 import Portfolio from '@carbon/icons-react/es/Portfolio.js';
 import UserMultiple from '@carbon/icons-react/es/UserMultiple.js';
+import ActivityIcon from '@carbon/icons-react/es/Activity.js';
+import UserAvatar from '@carbon/icons-react/es/UserAvatar.js';
 import type { SessionUser } from '../../shared/contracts';
 import { roleLabels } from '../../shared/contracts';
 import { api, ApiError } from './api';
@@ -15,6 +17,8 @@ import { Users } from './pages/Users';
 import { Projects } from './pages/Projects';
 import { DashboardPage } from './pages/Monitoring';
 import { ProjectSidebar } from './components/ProjectSidebar';
+import { Activity } from './pages/Activity';
+import { Profile } from './pages/Profile';
 import './projects.css';
 import './workspace.css';
 
@@ -75,8 +79,9 @@ export function App() {
       <a className={path === '/ringkasan' ? 'selected' : ''} href="/ringkasan" aria-current={path === '/ringkasan' ? 'page' : undefined}><Home size={20} aria-hidden="true" /> Beranda</a>
       <a className={path.startsWith('/proyek') ? 'selected' : ''} href="/proyek" aria-current={path.startsWith('/proyek') ? 'page' : undefined}><Portfolio size={20} aria-hidden="true" /> Proyek</a>
       {user.role === 'ADMINISTRATOR' && <a className={path === '/pengguna' ? 'selected' : ''} href="/pengguna" aria-current={path === '/pengguna' ? 'page' : undefined}><UserMultiple size={20} aria-hidden="true" /> Pengguna</a>}
+      {['ADMINISTRATOR', 'TEAM_LEADER'].includes(user.role) && <a className={path === '/aktivitas' ? 'selected' : ''} href="/aktivitas" aria-current={path === '/aktivitas' ? 'page' : undefined}><ActivityIcon size={20} aria-hidden="true" /> Aktivitas</a>}
     </nav><ProjectSidebar path={path} onNavigate={() => setMobileMenuOpen(false)} /><div className="sidebar-foot"><span className="prototype-label">Prototipe</span><p>Sistem Informasi<br />Monitoring Proyek</p></div></aside>
-    <div className="workspace-body"><header className="workspace-header"><button className="mobile-menu-button" type="button" aria-label={mobileMenuOpen ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <Close size={20} /> : <Menu size={20} />}<span>Menu</span></button><span>Ruang kerja · {roleLabels[user.role]}</span><div className="account-menu"><div><strong>{user.name}</strong><small>{roleLabels[user.role]}</small></div><button disabled={logoutBusy} onClick={async () => {
+    <div className="workspace-body"><header className="workspace-header"><button className="mobile-menu-button" type="button" aria-label={mobileMenuOpen ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <Close size={20} /> : <Menu size={20} />}<span>Menu</span></button><span>Ruang kerja · {roleLabels[user.role]}</span><div className="account-menu"><div><strong>{user.name}</strong><small>{roleLabels[user.role]}</small></div><a className="account-profile-link" href="/profil" aria-current={path === '/profil' ? 'page' : undefined}>{user.avatarUrl ? <img src={user.avatarUrl} alt="" /> : <UserAvatar size={18} aria-hidden="true" />} Profil</a><button disabled={logoutBusy} onClick={async () => {
       setLogoutBusy(true); setError('');
       try { await api('/api/auth/logout', { method: 'POST' }); setUser(null); setNotice('Anda berhasil keluar.'); window.history.replaceState(null, '', '/masuk'); }
       catch (err) { setError(err instanceof Error ? err.message : 'Belum dapat keluar. Silakan coba kembali.'); }
@@ -84,7 +89,7 @@ export function App() {
     }}>{logoutBusy ? 'Keluar…' : 'Keluar'} <Logout size={18} aria-hidden="true" /></button></div></header>
     <main className="workspace-main">
       {error && <Feedback error>{error}</Feedback>}
-      {path.startsWith('/proyek') ? <Projects user={user} /> : path === '/pengguna' ? user.role === 'ADMINISTRATOR' ? <Users currentUser={user} refreshSession={refresh} /> : <section className="state-panel"><h1>Akses tidak tersedia</h1><p>Halaman ini hanya dapat dibuka oleh Administrator.</p><a href="/ringkasan" className="button">Kembali ke Ringkasan</a></section> :
+      {path.startsWith('/proyek') ? <Projects user={user} /> : path === '/profil' ? <Profile user={user} refreshSession={refresh} /> : path === '/aktivitas' ? ['ADMINISTRATOR', 'TEAM_LEADER'].includes(user.role) ? <Activity /> : <section className="state-panel"><h1>Akses tidak tersedia</h1><p>Halaman ini hanya dapat dibuka oleh Administrator dan Team Leader.</p><a href="/ringkasan" className="button">Kembali ke Beranda</a></section> : path === '/pengguna' ? user.role === 'ADMINISTRATOR' ? <Users currentUser={user} refreshSession={refresh} /> : <section className="state-panel"><h1>Akses tidak tersedia</h1><p>Halaman ini hanya dapat dibuka oleh Administrator.</p><a href="/ringkasan" className="button">Kembali ke Ringkasan</a></section> :
       <><PageHeader eyebrow="Beranda" title="Proyek Anda" description={user.role === 'TEAM_LEADER' ? <>Pantau kemajuan dan selesaikan pekerjaan yang perlu ditindaklanjuti.</> : <>Selamat datang, {user.name}. Pilih proyek untuk mulai bekerja.</>} actions={user.role === 'ADMINISTRATOR' ? <a className="button" href="/pengguna">Kelola Pengguna</a> : undefined} /><DashboardPage user={user}/></>}
     </main></div>
   </div>;

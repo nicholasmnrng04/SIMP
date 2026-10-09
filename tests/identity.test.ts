@@ -38,7 +38,7 @@ test('login generik, cookie aman, rotasi, sesi persisten, kedaluwarsa dan logout
   }
   const first = await signIn('ADMIN@example.test');
   assert.equal(first.response.statusCode, 200);
-  assert.deepEqual(Object.keys(first.response.json().user).sort(), ['email', 'id', 'name', 'role']);
+  assert.deepEqual(Object.keys(first.response.json().user).sort(), ['avatarUrl', 'email', 'id', 'name', 'role']);
   assert.match(String(first.response.headers['set-cookie']), /HttpOnly/);
   assert.match(String(first.response.headers['set-cookie']), /SameSite=Lax/);
   assert.match(String(first.response.headers['set-cookie']), /Secure/);

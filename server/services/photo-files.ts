@@ -1,9 +1,9 @@
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 
-function fileName(id: string): string {
+function fileName(id: string, namespace: '' | 'avatars' = ''): string {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error('ID foto tidak valid.');
-  return `${id}.jpg`;
+  return `${namespace ? `${namespace}/` : ''}${id}.jpg`;
 }
 
 function remoteConfig() {
@@ -39,11 +39,11 @@ export function assertPhotoStorageReady(): void {
   }
 }
 
-export async function writePhoto(directory: string, id: string, bytes: Buffer): Promise<void> {
-  const name = fileName(id);
+export async function writePhoto(directory: string, id: string, bytes: Buffer, namespace: '' | 'avatars' = ''): Promise<void> {
+  const name = fileName(id, namespace);
   const remote = remoteConfig();
   if (!remote) {
-    await mkdir(directory, { recursive: true });
+    await mkdir(join(directory, namespace), { recursive: true });
     await writeFile(join(resolve(directory), name), bytes, { flag: 'wx' });
     return;
   }
@@ -54,8 +54,8 @@ export async function writePhoto(directory: string, id: string, bytes: Buffer): 
   if (!response.ok) throw new Error(`Penyimpanan foto gagal (${response.status}).`);
 }
 
-export async function readPhotoBytes(directory: string, id: string): Promise<Buffer> {
-  const name = fileName(id);
+export async function readPhotoBytes(directory: string, id: string, namespace: '' | 'avatars' = ''): Promise<Buffer> {
+  const name = fileName(id, namespace);
   const remote = remoteConfig();
   if (!remote) return readFile(join(resolve(directory), name));
   const response = await fetch(`${remote.base}/authenticated/${remote.bucket}/${name}`, {
@@ -65,8 +65,8 @@ export async function readPhotoBytes(directory: string, id: string): Promise<Buf
   return Buffer.from(await response.arrayBuffer());
 }
 
-export async function removePhoto(directory: string, id: string): Promise<void> {
-  const name = fileName(id);
+export async function removePhoto(directory: string, id: string, namespace: '' | 'avatars' = ''): Promise<void> {
+  const name = fileName(id, namespace);
   const remote = remoteConfig();
   if (!remote) {
     try { await unlink(join(resolve(directory), name)); }

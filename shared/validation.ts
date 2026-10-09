@@ -13,5 +13,14 @@ const userFields = {
 };
 export const createUserSchema = z.object({ ...userFields, password: passwordSchema }).strict();
 export const updateUserSchema = z.object({ ...userFields, password: passwordSchema.optional() }).strict();
+export const profileNameSchema = z.object({ name: userFields.name }).strict();
+export const profilePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Kata sandi saat ini wajib diisi.').max(128),
+  newPassword: passwordSchema,
+}).strict();
+export const profilePhotoSchema = z.object({
+  mime: z.enum(['image/jpeg', 'image/png']),
+  data: z.string().min(1).max(1_500_000),
+}).strict();
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;

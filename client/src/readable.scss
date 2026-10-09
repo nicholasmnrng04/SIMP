@@ -26,6 +26,38 @@
 .workspace .workspace-header { min-height: 56px; padding-block: 6px; background: #fff; }
 .workspace .workspace-header > span, .workspace .account-menu small { font-size: 14px; }
 .workspace .account-menu strong { font-size: 14px; }
+.workspace .account-profile-link { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 7px 10px; color: #24343c; text-decoration: none; border-radius: 4px; }
+.workspace .account-profile-link:hover, .workspace .account-profile-link[aria-current=page] { background: #f7e8db; color: #813508; }
+.workspace .account-profile-link img { width: 24px; height: 24px; object-fit: cover; border-radius: 4px; }
+.workspace .activity-filter-panel, .workspace .activity-list-panel, .workspace .profile-panel { min-width: 0; margin: 16px 0; padding: 16px; background: #fff; border: 1px solid var(--simp-border); border-radius: 4px; box-shadow: none; }
+.workspace .activity-filter-panel h2, .workspace .activity-list-panel h2, .workspace .profile-panel h2 { margin: 0 0 14px; font-size: 18px; }
+.workspace .activity-filters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; align-items: end; }
+.workspace .activity-filters label, .workspace .profile-panel form { display: grid; gap: 6px; min-width: 0; }
+.workspace .activity-filters select, .workspace .activity-filters input { width: 100%; }
+.workspace .activity-filter-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; grid-column: 1 / -1; }
+.workspace .activity-list-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.workspace .activity-list-heading span, .workspace .activity-pagination span { color: #53636d; }
+.workspace .activity-table-wrap { overflow-x: auto; max-width: 100%; }
+.workspace .activity-table { width: 100%; border-collapse: collapse; }
+.workspace .activity-table td { border-top: 1px solid var(--simp-border); vertical-align: top; }
+.workspace .activity-table td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.workspace .activity-pagination { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.workspace .profile-layout { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.workspace .profile-layout .profile-panel { margin-top: 0; }
+.workspace .profile-panel form { max-width: 440px; }
+.workspace .profile-panel form button { justify-self: start; margin-top: 10px; }
+.workspace .profile-panel form input { width: 100%; }
+.workspace .profile-identity { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; }
+.workspace .profile-identity img, .workspace .profile-identity > span { width: 56px; height: 56px; flex: none; border-radius: 4px; object-fit: cover; }
+.workspace .profile-identity > span { display: grid; place-items: center; background: #eaf0f1; color: #24343c; font-size: 24px; font-weight: 700; }
+.workspace .profile-identity strong, .workspace .profile-identity small { display: block; overflow-wrap: anywhere; }
+.workspace .profile-photo-controls { border-top: 1px solid var(--simp-border); margin-top: 20px; padding-top: 18px; }
+.workspace .profile-photo-controls label { display: block; font-weight: 650; }
+.workspace .profile-photo-controls input { display: block; max-width: 100%; margin: 10px 0; }
+.workspace .profile-guide ol { padding: 0; margin: 0; list-style: none; }
+.workspace .profile-guide li { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--simp-border); }
+.workspace .profile-guide li p { margin: 4px 0 0; color: #53636d; }
+.workspace .profile-guide li a { flex: none; }
 .workspace .workspace-main :is(p, li, dd, label, input, select, textarea, button, .button) { font-size: 14px; line-height: 1.55; }
 .workspace .workspace-main :is(input:not([type=checkbox]):not([type=radio]), select, button, .button) { min-height: 40px; }
 .workspace .workspace-main :is(.small, small, .eyebrow, .field-hint, .work-kind) { font-size: 13px !important; line-height: 1.5; }
@@ -160,6 +192,16 @@
   .workspace .report-part .report-row .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 @media (max-width: 720px) {
+  .workspace .account-menu > div { display: none; }
+  .workspace .account-profile-link { min-height: 44px; padding-inline: 8px; }
+  .workspace .activity-filters, .workspace .profile-layout { grid-template-columns: minmax(0,1fr); }
+  .workspace .activity-filter-panel, .workspace .activity-list-panel, .workspace .profile-panel { padding: 12px; }
+  .workspace .activity-table-wrap { overflow: visible; }
+  .workspace .activity-table, .workspace .activity-table tbody, .workspace .activity-table tr, .workspace .activity-table td { display: block; width: 100%; }
+  .workspace .activity-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .workspace .activity-table tr { padding: 10px 0; border-top: 1px solid var(--simp-border); }
+  .workspace .activity-table td { border: 0; padding: 3px 0; white-space: normal; }
+  .workspace .activity-table td::before { content: attr(data-label); display: block; color: #53636d; font-size: 13px; font-weight: 650; }
   .workspace .leader-dashboard .dashboard-project-control { grid-template-columns: minmax(0,1fr); }
   .workspace .dashboard-action-list li { grid-template-columns: 36px minmax(0,1fr); }
   .workspace .dashboard-action-list li > a { grid-column: 2; justify-self: start; min-height: 44px; display: inline-flex; align-items: center; }

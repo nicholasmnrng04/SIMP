@@ -4,7 +4,7 @@ Panduan ini untuk **trial demo**, belum untuk production. Supabase menyimpan dat
 
 ## Kondisi database demo
 
-Proyek Supabase dan bucket privat `simp-report-photos` sudah dibuat. Sepuluh migration telah diterapkan lewat Session pooler, dan satu Administrator awal sudah dibuat. Pemeriksaan terakhir mencatat **0 proyek, 0 laporan, dan 0 foto**. Ini berarti aplikasi siap diisi melalui UI setelah deployment, tanpa memindahkan data lokal. Tidak perlu menjalankan bootstrap lagi. Migration berikutnya tetap dijalankan dari CLI yang tersedia, bukan saat Vercel Function mulai.
+Proyek Supabase dan bucket privat `simp-report-photos` sudah dibuat. Sebelum fitur Profil/Aktivitas diterapkan, pemeriksaan baca-saja mencatat **10 migration, 8 akun, 0 proyek, 0 laporan, dan 0 foto**. Akun yang sudah ada dipertahankan. Migration baru `011_profile_activity.sql` menambahkan kolom foto profil dan indeks aktivitas; terapkan melalui `npm.cmd run db:demo:migrate` setelah build lulus, bukan saat Vercel Function mulai. Foto profil disimpan secara privat dalam folder `avatars/` pada bucket yang sama.
 
 ## 1. Siapkan repository untuk Vercel
 
@@ -39,7 +39,7 @@ Atur variabel untuk environment Vercel yang hendak dipakai. Untuk domain demo sa
 
 ## 3. Deploy dan periksa
 
-Sesudah variabel lengkap, deploy proyek. Buka `https://<domain-demo>/api/health`; respons siap harus berstatus **200**. Buka `https://<domain-demo>/api/auth/me` tanpa login; **401** adalah respons yang benar dan membuktikan API terjangkau. Kemudian masuk dengan akun Administrator demo, buat satu proyek melalui UI, dan buat akun role lain sesuai kebutuhan.
+Sesudah variabel lengkap dan migration baru diterapkan, deploy proyek. Buka `https://<domain-demo>/api/health`; respons siap harus berstatus **200**. Buka `https://<domain-demo>/api/auth/me` tanpa login; **401** adalah respons yang benar dan membuktikan API terjangkau. Kemudian masuk dengan akun Administrator demo. Periksa **Aktivitas** untuk Administrator dan Team Leader, serta **Profil** untuk seluruh role. Uji perubahan nama, unggah/hapus foto, dan perubahan kata sandi pada akun demo yang aman untuk diubah. Fitur foto profil menggunakan konfigurasi Supabase Storage yang sama dengan foto laporan; bucket harus tetap privat.
 
 Sebelum membagikan demo, periksa login dan hak akses lima role, laporan Inspector dan foto, pemeriksaan Engineer, persetujuan Team Leader, kemajuan, PDF/Excel, refresh pada URL halaman dalam, serta tampilan HP. Periksa khusus satu unggahan foto besar dan satu ekspor dengan data realistis. **PDF/Excel yang lebih besar dari batas respons Vercel 4,5 MB mungkin belum dapat diunduh melalui Function**; jika itu terjadi, perlu mekanisme unduhan lain sebelum memakai dataset besar. Jangan mengubah izin bucket menjadi public untuk mengatasi masalah unduhan.
 
@@ -49,7 +49,7 @@ Jika perlu Administrator kedua sebelum dapat login, jalankan `npm.cmd run db:dem
 
 ## Validasi lokal yang sudah dilakukan
 
-`npm run build` dan 79 tes backend terkompilasi lulus. Transaction pooler Supabase berhasil dihubungi baca-saja dengan TLS dan CA. Adapter API diuji lokal: `/api/health` dan path rewrite menghasilkan 200, sedangkan `/api/auth/me` tanpa sesi menghasilkan 401. Tes browser laporan desktop/HP lulus, termasuk unggah foto sumber lebih dari 2,8 MiB yang dikompresi dan dibuka ulang. Tes Storage memakai mock privat; **akses bucket nyata dan deployment Vercel belum diuji**. Database demo dan data lokal tidak direset.
+Untuk pembaruan Profil/Aktivitas, `npm.cmd run build` lulus. Tes backend 76/81 lulus dalam rangkaian penuh; lima kegagalan hanya berupa ekspektasi jumlah migration lama dan ketujuh tes migration terkait lulus setelah ekspektasi diperbarui. Tes browser 76/78 lulus dalam rangkaian penuh; dua skenario workbook gagal saat Vite lokal kehabisan buffer jaringan, lalu keduanya lulus ketika diulang sendiri. Sepuluh skenario baru Profil/Aktivitas lulus pada desktop dan HP. Migration 011 sudah diterapkan pada Supabase demo: pemeriksaan sesudahnya menunjukkan **11 migration, 8 akun, 0 proyek, 0 laporan, 0 foto**. Deployment perubahan ini masih perlu diverifikasi pada domain demo.
 
 Password database yang pernah terkirim melalui percakapan sebaiknya diganti di Supabase sebelum demo dibagikan; sesudahnya perbarui `.env.demo` dan `DATABASE_URL` Vercel secara privat.
 

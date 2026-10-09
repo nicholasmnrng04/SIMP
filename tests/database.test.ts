@@ -17,7 +17,7 @@ test('migration 009 menambah kontraktor kosong tanpa mengubah data proyek atau h
   await sandbox.db.query("INSERT INTO projects(id,project_code,project_name,start_date,end_date,created_by,updated_by,description) VALUES('legacy-project','OLD','Proyek lama','2026-07-16','2026-07-23','legacy-admin','legacy-admin','Kontraktor dicatat manual dahulu')");
   const before=(await sandbox.db.query('SELECT * FROM projects')).rows[0];
   const history=(await sandbox.db.query('SELECT * FROM schema_migrations ORDER BY name')).rows;
-  assert.equal(await migrate(sandbox.db),2); assert.equal(await migrate(sandbox.db),0);
+  assert.equal(await migrate(sandbox.db),3); assert.equal(await migrate(sandbox.db),0);
   const after=(await sandbox.db.query('SELECT * FROM projects')).rows[0];
   assert.equal(after.contractor_name,''); delete after.contractor_name; assert.deepEqual(after,before);
   assert.deepEqual((await sandbox.db.query('SELECT * FROM schema_migrations ORDER BY name')).rows.slice(0,8),history);
@@ -27,7 +27,7 @@ test('migration PostgreSQL berulang dan koneksi baru mempertahankan data', async
   const sandbox = await createTestDatabase();
   t.after(sandbox.close);
   const { db, schema } = sandbox;
-  assert.equal(await migrate(db), 10);
+  assert.equal(await migrate(db), 11);
   assert.equal(await migrate(db), 0);
   assert.equal((await db.query('SELECT COUNT(*)::int AS count FROM roles')).rows[0].count, 5);
   await db.query(`INSERT INTO users (id, name, email, password_hash, role_code)
@@ -55,8 +55,8 @@ test('migration PostgreSQL berulang dan koneksi baru mempertahankan data', async
 test('dua runner migration bersamaan menerapkan schema satu kali', async (t) => {
   const sandbox = await createTestDatabase();
   t.after(sandbox.close);
-  assert.deepEqual((await Promise.all([migrate(sandbox.db), migrate(sandbox.db)])).sort(), [0, 10]);
-  assert.equal((await sandbox.db.query('SELECT COUNT(*)::int AS count FROM schema_migrations')).rows[0].count, 10);
+  assert.deepEqual((await Promise.all([migrate(sandbox.db), migrate(sandbox.db)])).sort(), [0, 11]);
+  assert.equal((await sandbox.db.query('SELECT COUNT(*)::int AS count FROM schema_migrations')).rows[0].count, 11);
 });
 
 test('migration yang pernah diterapkan tidak boleh diubah', async (t) => {
@@ -75,7 +75,7 @@ test('migration gagal dibatalkan tanpa schema setengah jadi', async (t) => {
   const directory = temporaryDirectory(t);
   const copied = path.join(directory, 'migrations');
   cpSync(migrationsDirectory, copied, { recursive: true });
-  writeFileSync(path.join(copied, '011_broken.sql'), 'CREATE TABLE incomplete (id TEXT); INVALID SQL;');
+  writeFileSync(path.join(copied, '012_broken.sql'), 'CREATE TABLE incomplete (id TEXT); INVALID SQL;');
   const sandbox = await createTestDatabase();
   t.after(sandbox.close);
   await assert.rejects(migrate(sandbox.db, copied));

@@ -4,8 +4,10 @@ import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '../errors.js';
 import { authorization } from '../security/authorization.js';
-import { login, logout, sessionCookieName, sessionSeconds } from '../services/auth.js';
+import { login, logout, sessionCookieName, sessionSeconds, sessionUser } from '../services/auth.js';
 import { createUser, listUsers, updateUser } from '../services/users.js';
+import { activityPage } from '../services/activity.js';
+import { updateOwnName, changeOwnPassword, uploadOwnPhoto, ownPhoto, deleteOwnPhoto } from '../services/profile.js';
 import { projectRoutes } from './projects.js';
 
 export interface IdentityOptions { db: Pool; allowedOrigins: string[]; cookieSecure: boolean; projectTimezone: string; uploadDir: string }
@@ -28,6 +30,29 @@ export const identityRoutes: FastifyPluginAsync<IdentityOptions> = async (app, o
     return { user };
   });
   app.get('/api/auth/me', { onRequest: guard.requireUser }, async (request) => ({ user: request.currentUser }));
+  app.get('/api/activity', { onRequest: guard.requireRoles('ADMINISTRATOR', 'TEAM_LEADER') }, request =>
+    activityPage(options.db, request.currentUser!.id, request.query));
+  app.patch('/api/profile', { onRequest: guard.requireUser, bodyLimit: 4096 }, async request => {
+    await updateOwnName(options.db, request.currentUser!.id, request.body);
+    return { user: await sessionUser(options.db, request.cookies[sessionCookieName]) };
+  });
+  app.post('/api/profile/password', { onRequest: guard.requireUser, config: { rateLimit: { max: 5, timeWindow: '1 minute' } }, bodyLimit: 4096 }, async (request, reply) => {
+    await changeOwnPassword(options.db, request.currentUser!.id, request.body);
+    reply.clearCookie(sessionCookieName, { path: '/', httpOnly: true, sameSite: 'lax', secure: options.cookieSecure });
+    return reply.status(204).send();
+  });
+  app.post('/api/profile/photo', { onRequest: guard.requireUser, bodyLimit: 1_600_000 }, async request => {
+    await uploadOwnPhoto(options.db, options.uploadDir, request.currentUser!.id, request.body);
+    return { user: await sessionUser(options.db, request.cookies[sessionCookieName]) };
+  });
+  app.get('/api/profile/photo', { onRequest: guard.requireUser }, async (request, reply) => {
+    const bytes = await ownPhoto(options.db, options.uploadDir, request.currentUser!.id);
+    return reply.header('Content-Type', 'image/jpeg').header('Cache-Control', 'private, no-store').send(bytes);
+  });
+  app.delete('/api/profile/photo', { onRequest: guard.requireUser }, async (request, reply) => {
+    await deleteOwnPhoto(options.db, options.uploadDir, request.currentUser!.id);
+    return reply.status(204).send();
+  });
   app.post('/api/auth/logout', async (request, reply) => {
     await logout(options.db, request.cookies[sessionCookieName]);
     reply.clearCookie(sessionCookieName, cookieOptions);

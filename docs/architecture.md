@@ -328,6 +328,12 @@ Perbaikan setelah T11 menambahkan `projects.contractor_name` melalui migration `
 
 Laporan harian dan ekspor membaca identitas kontraktor proyek saat ini, dengan keterangan yang membedakannya dari snapshot kegiatan/volume/persetujuan. M1/B1 memakai kop U5 dan organisasi pelaksana U82, TS memakai Z72, H0 memakai identitas di B6. Nama penandatangan tetap tidak diisi otomatis. Migration 001–008 tidak diubah.
 
+### Aktivitas dan profil mandiri
+
+Migration `011_profile_activity.sql` menambah `users.avatar_photo_id` dan indeks untuk pembacaan audit terbaru. `GET /api/activity` membaca `audit_events` secara berhalaman; Administrator dapat membaca seluruh kejadian, sedangkan Team Leader hanya kejadian proyek dengan penugasan aktif pada tanggal akses. Respons memakai label tindakan dan tautan yang sesuai hak akses, tanpa mengirim `note` mentah. Akun role lain mendapat 403.
+
+`PATCH /api/profile` hanya mengubah nama pengguna yang sedang masuk. `POST /api/profile/password` memeriksa kata sandi lama, mengganti hash scrypt, dan mencabut seluruh sesi akun. `POST`, `GET`, dan `DELETE /api/profile/photo` hanya bekerja untuk pemilik sesi; foto dinormalisasi menjadi JPEG 320×320 dan disimpan di folder privat `avatars/` pada bucket Storage yang sama dengan foto laporan. Pada lokal, folder `avatars/` berada di bawah `UPLOAD_DIR`. Email, role, dan status akun tetap hanya dapat diubah lewat layanan Administrator.
+
 ### Impor pekerjaan workbook untuk demo T11
 
 Terpisah dari template tampilan, `scripts/extract-workbook-work.mjs` mengekstrak uraian/hierarki TS dan basis angka M1 menjadi `server/templates/workbook-work.json`. Pengguna membuka pratinjau lewat `GET /api/projects/:id/work-items/workbook`, lalu mengonfirmasi `POST` pada alamat sama. Service `workbook-work.ts` memvalidasi hak Admin/TL, keanggotaan/arsip, hash sumber, basis belum terkunci dan daftar kosong. Lock proyek serta satu transaksi menjaga 45 insert dan audit, termasuk klik bersamaan. UI tidak menjadi penyimpanan data; setelah impor seluruh fitur membaca tabel `work_items` biasa. Tidak ada migration atau impor target/aktual otomatis. Keputusan D90–D92 dan panduan demo menjelaskan presisi serta sumber.

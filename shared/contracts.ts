@@ -12,5 +12,5 @@ export type RoleCode = typeof roleCodes[number];
 export const roleLabels: Record<RoleCode, string> = {
   ADMINISTRATOR: 'Administrator', OWNER: 'Owner', TEAM_LEADER: 'Team Leader', ENGINEER: 'Engineer', INSPECTOR: 'Inspector',
 };
-export interface SessionUser { id: string; name: string; email: string; role: RoleCode }
-export interface ManagedUser extends SessionUser { isActive: boolean; createdAt: string }
+export interface SessionUser { id: string; name: string; email: string; role: RoleCode; avatarUrl: string | null }
+export interface ManagedUser extends Omit<SessionUser, 'avatarUrl'> { isActive: boolean; createdAt: string }

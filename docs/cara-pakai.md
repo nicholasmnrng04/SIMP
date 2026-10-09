@@ -397,3 +397,9 @@ Nama tersebut tampil pada detail proyek, ringkasan laporan harian, pratinjau dan
 Masuk sebagai Administrator atau Team Leader, buka proyek dengan daftar pekerjaan kosong, lalu **Daftar Pekerjaan → Lihat Pekerjaan dari Workbook TS**. Periksa 7 kelompok dan 38 item, kemudian klik **Impor Pekerjaan TS ke Proyek Ini**. Uraian mengikuti sheet TS; satuan, volume, dan harga mengikuti M1. Angka yang dibulatkan ditandai saat pratinjau. Pekerjaan tersimpan dalam database dan tidak hilang setelah halaman dimuat ulang.
 
 Tombol hanya tersedia sebelum daftar terisi dan sebelum Rencana Awal mengunci basis. Data lama tidak ditimpa. Rencana, laporan dan realisasi tetap dibuat melalui alur aplikasi. Panduan dari pembuatan akun sampai Owner memantau tersedia pada [panduan demo](demo-guide.md).
+
+## Aktivitas dan profil akun
+
+Administrator dan Team Leader memiliki menu **Aktivitas** di navigasi utama. Administrator dapat menelusuri kejadian seluruh aplikasi; Team Leader hanya melihat kejadian pada proyek yang saat ini ditugaskan kepadanya. Gunakan filter proyek, jenis aktivitas, dan tanggal untuk menemukan perubahan. Tautan **Buka** menuju proyek, laporan, atau pengelolaan pengguna sesuai hak akses. Riwayat audit tidak dapat dihapus melalui halaman ini.
+
+Semua pengguna dapat memilih **Profil** pada bagian akun. Di sana pengguna dapat mengganti nama tampilan, mengunggah atau menghapus foto profil, mengubah kata sandi, dan membaca panduan ringkas sesuai perannya. Untuk mengganti kata sandi, masukkan kata sandi saat ini dan kata sandi baru minimal 12 karakter. Setelah berhasil, semua sesi akun tersebut berakhir; masuk kembali dengan kata sandi baru. Email, peran, serta status akun tetap dikelola oleh Administrator melalui menu **Pengguna**.
