@@ -15,17 +15,30 @@ let appPromise: Promise<FastifyInstance> | undefined;
 async function application(): Promise<FastifyInstance> {
   if (!appPromise) {
     appPromise = (async () => {
-      const config = readConfig();
-      assertPhotoStorageReady();
-      const db = openDatabase(config.databaseUrl, config.databaseSchema);
-      const app = buildApp({
-        db, logLevel: config.logLevel,
-        allowedOrigins: config.allowedOrigins, cookieSecure: config.cookieSecure,
-        projectTimezone: config.projectTimezone, uploadDir: config.uploadDir,
-      });
-      app.addHook('onClose', async () => { await db.end(); });
-      await app.ready();
-      return app;
+      let stage = 'configuration';
+      try {
+        const config = readConfig();
+        stage = 'storage';
+        assertPhotoStorageReady();
+        stage = 'database';
+        const db = openDatabase(config.databaseUrl, config.databaseSchema);
+        stage = 'routes';
+        const app = buildApp({
+          db, logLevel: config.logLevel,
+          allowedOrigins: config.allowedOrigins, cookieSecure: config.cookieSecure,
+          projectTimezone: config.projectTimezone, uploadDir: config.uploadDir,
+        });
+        app.addHook('onClose', async () => { await db.end(); });
+        await app.ready();
+        return app;
+      } catch (error) {
+        const code = typeof error === 'object' && error && 'code' in error && typeof error.code === 'string'
+          ? error.code : undefined;
+        console.error('SIMP API initialization failed', {
+          stage, type: error instanceof Error ? error.name : typeof error, code,
+        });
+        throw error;
+      }
     })();
     appPromise.catch(() => { appPromise = undefined; });
   }
