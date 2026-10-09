@@ -17,6 +17,7 @@
     "db:demo:inspect": "node --env-file=.env.demo dist/server/cli/demo-setup.js inspect",
     "db:demo:bootstrap": "node --env-file=.env.demo dist/server/cli/demo-setup.js bootstrap",
     "db:demo:reset-admin": "node --env-file=.env.demo scripts/reset-demo-admin.mjs",
+    "db:demo:add-admin": "node --env-file=.env.demo scripts/add-demo-admin.mjs",
     "db:demo:set-password": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-demo-password.ps1",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.server.json --noEmit",
     "build": "npm run typecheck && vite build && tsc -p tsconfig.server.json && node scripts/copy-migrations.mjs",

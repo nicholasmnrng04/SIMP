@@ -45,6 +45,8 @@ Sebelum membagikan demo, periksa login dan hak akses lima role, laporan Inspecto
 
 Jika kata sandi satu-satunya Administrator demo terlupa, jalankan `npm.cmd run db:demo:reset-admin` dari workspace yang memiliki `.env.demo` dan sertifikat CA. Perintah ini hanya menerima database Supabase demo, membuat kata sandi acak, mengakhiri sesi lama, dan menyimpan kredensial baru di `.tmp/admin-demo-login.txt` yang diabaikan Git. Buka berkas tersebut secara lokal, masuk melalui domain utama, ganti kata sandi lewat menu **Pengguna**, lalu hapus berkasnya. Jangan kirim kata sandi melalui chat atau commit.
 
+Jika perlu Administrator kedua sebelum dapat login, jalankan `npm.cmd run db:demo:add-admin -- email-baru@domain.com` dari workspace yang sama. Nama tampilan default adalah **Administrator SIMP**; nama lain dapat ditambahkan sebagai argumen setelah email. Perintah memakai service pembuatan pengguna dan izin Administrator yang sudah ada, lalu menyimpan password awal acak di `.tmp/administrator-2-login.txt`. Akun pertama tidak dihapus. Setelah login berhasil, ganti password awal melalui **Pengguna** dan hapus berkas kredensial sementara.
+
 ## Validasi lokal yang sudah dilakukan
 
 `npm run build` dan 79 tes backend terkompilasi lulus. Transaction pooler Supabase berhasil dihubungi baca-saja dengan TLS dan CA. Adapter API diuji lokal: `/api/health` dan path rewrite menghasilkan 200, sedangkan `/api/auth/me` tanpa sesi menghasilkan 401. Tes browser laporan desktop/HP lulus, termasuk unggah foto sumber lebih dari 2,8 MiB yang dikompresi dan dibuka ulang. Tes Storage memakai mock privat; **akses bucket nyata dan deployment Vercel belum diuji**. Database demo dan data lokal tidak direset.
