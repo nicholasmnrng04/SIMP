@@ -61,10 +61,10 @@ test('kegagalan unggah Storage memberi kode aman tanpa mengungkap secret', async
   process.env.SUPABASE_URL = 'https://contoh.supabase.co';
   process.env.SUPABASE_SECRET_KEY = 'sb_secret_kunci-uji';
   process.env.SUPABASE_STORAGE_BUCKET = 'simp-report-photos';
-  const fetchMock = mock.method(globalThis, 'fetch', async () => new Response('private error', { status: 403 }));
+  const fetchMock = mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ errorCode: 'InvalidRequest', message: 'private error' }), { status: 403 }));
   try {
     await assert.rejects(() => writePhoto('tidak-dipakai', id, Buffer.from('foto-uji')), error => {
-      assert.equal((error as { code?: string }).code, 'PHOTO_STORAGE_403');
+      assert.equal((error as { code?: string }).code, 'PHOTO_STORAGE_403_INVALIDREQUEST');
       assert.ok(!String(error).includes('kunci-uji'));
       assert.ok(!String(error).includes('private error'));
       return true;

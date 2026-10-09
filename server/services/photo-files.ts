@@ -58,7 +58,11 @@ export async function writePhoto(directory: string, id: string, bytes: Buffer, n
     throw new AppError(503, 'PHOTO_STORAGE_NETWORK', 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
   }
   if (!response.ok) {
-    throw new AppError(503, `PHOTO_STORAGE_${response.status}`, 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
+    const details = await response.json().catch(() => null) as { errorCode?: unknown; error?: unknown } | null;
+    const rawCode = typeof details?.errorCode === 'string' ? details.errorCode : details?.error;
+    const safeCode = typeof rawCode === 'string' && /^[A-Za-z][A-Za-z0-9_]{0,40}$/.test(rawCode)
+      ? rawCode.toUpperCase() : 'UNKNOWN';
+    throw new AppError(503, `PHOTO_STORAGE_${response.status}_${safeCode}`, 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
   }
 }
 
