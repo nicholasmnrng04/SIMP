@@ -36,6 +36,7 @@ async function application(): Promise<FastifyInstance> {
           ? error.code : undefined;
         console.error('SIMP API initialization failed', {
           stage, type: error instanceof Error ? error.name : typeof error, code,
+          ...(stage === 'configuration' && error instanceof Error ? { fields: error.message } : {}),
         });
         throw error;
       }
