@@ -47,7 +47,7 @@ test('foto privat memakai Storage server-side dan tidak mengungkap secret ke URL
     assert.deepEqual(calls.map(call => call.method), ['POST', 'GET', 'DELETE']);
     assert.ok(calls[1].url.includes('/storage/v1/object/authenticated/simp-report-photos/'));
     assert.ok(calls.every(call => call.apikey === 'sb_secret_kunci-uji'
-      && call.authorization === '' && !call.url.includes('kunci-uji')));
+      && call.authorization === 'Bearer sb_secret_kunci-uji' && !call.url.includes('kunci-uji')));
   } finally {
     fetchMock.mock.restore();
     if (previous.url === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = previous.url;

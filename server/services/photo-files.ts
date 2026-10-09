@@ -19,10 +19,9 @@ function remoteConfig() {
     throw new Error('Konfigurasi Supabase Storage tidak valid.');
   }
   const base = `${origin.origin}/storage/v1/object`;
-  // Kunci baru sb_secret_* bukan JWT dan harus dikirim melalui apikey.
-  const headers = key.startsWith('sb_secret_')
-    ? { apikey: key }
-    : { apikey: key, Authorization: `Bearer ${key}` };
+  // Storage memerlukan konteks Authorization untuk akses objek privat.
+  // Kunci tetap hanya dikirim dari server ke origin Supabase proyek ini.
+  const headers = { apikey: key, Authorization: `Bearer ${key}` };
   return { base, bucket, headers };
 }
 
