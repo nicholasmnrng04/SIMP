@@ -55,3 +55,26 @@ test('foto privat memakai Storage server-side dan tidak mengungkap secret ke URL
     if (previous.bucket === undefined) delete process.env.SUPABASE_STORAGE_BUCKET; else process.env.SUPABASE_STORAGE_BUCKET = previous.bucket;
   }
 });
+
+test('kegagalan unggah Storage memberi kode aman tanpa mengungkap secret', async () => {
+  const previous = [process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, process.env.SUPABASE_STORAGE_BUCKET];
+  process.env.SUPABASE_URL = 'https://contoh.supabase.co';
+  process.env.SUPABASE_SECRET_KEY = 'sb_secret_kunci-uji';
+  process.env.SUPABASE_STORAGE_BUCKET = 'simp-report-photos';
+  const fetchMock = mock.method(globalThis, 'fetch', async () => new Response('private error', { status: 403 }));
+  try {
+    await assert.rejects(() => writePhoto('tidak-dipakai', id, Buffer.from('foto-uji')), error => {
+      assert.equal((error as { code?: string }).code, 'PHOTO_STORAGE_403');
+      assert.ok(!String(error).includes('kunci-uji'));
+      assert.ok(!String(error).includes('private error'));
+      return true;
+    });
+  } finally {
+    fetchMock.mock.restore();
+    for (const [name, value] of [
+      ['SUPABASE_URL', previous[0]], ['SUPABASE_SECRET_KEY', previous[1]], ['SUPABASE_STORAGE_BUCKET', previous[2]],
+    ] as const) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  }
+});

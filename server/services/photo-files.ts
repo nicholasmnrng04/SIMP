@@ -1,5 +1,6 @@
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
+import { AppError } from '../errors.js';
 
 function fileName(id: string, namespace: '' | 'avatars' = ''): string {
   if (!/^[a-f0-9-]{36}$/.test(id)) throw new Error('ID foto tidak valid.');
@@ -47,11 +48,18 @@ export async function writePhoto(directory: string, id: string, bytes: Buffer, n
     await writeFile(join(resolve(directory), name), bytes, { flag: 'wx' });
     return;
   }
-  const response = await fetch(`${remote.base}/${remote.bucket}/${name}`, {
-    method: 'POST', headers: { ...remote.headers, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' },
-    body: new Uint8Array(bytes), signal: AbortSignal.timeout(30000),
-  });
-  if (!response.ok) throw new Error(`Penyimpanan foto gagal (${response.status}).`);
+  let response: Response;
+  try {
+    response = await fetch(`${remote.base}/${remote.bucket}/${name}`, {
+      method: 'POST', headers: { ...remote.headers, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' },
+      body: new Uint8Array(bytes), signal: AbortSignal.timeout(30000),
+    });
+  } catch {
+    throw new AppError(503, 'PHOTO_STORAGE_NETWORK', 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
+  }
+  if (!response.ok) {
+    throw new AppError(503, `PHOTO_STORAGE_${response.status}`, 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
+  }
 }
 
 export async function readPhotoBytes(directory: string, id: string, namespace: '' | 'avatars' = ''): Promise<Buffer> {
