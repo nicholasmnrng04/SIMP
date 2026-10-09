@@ -19,7 +19,7 @@ async function application(): Promise<FastifyInstance> {
       assertPhotoStorageReady();
       const db = openDatabase(config.databaseUrl, config.databaseSchema);
       const app = buildApp({
-        db, logLevel: config.logLevel, serveClient: false,
+        db, logLevel: config.logLevel,
         allowedOrigins: config.allowedOrigins, cookieSecure: config.cookieSecure,
         projectTimezone: config.projectTimezone, uploadDir: config.uploadDir,
       });

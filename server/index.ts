@@ -9,7 +9,12 @@ const db = openDatabase(config.databaseUrl, config.databaseSchema);
 try {
   await migrate(db);
   mkdirSync(config.uploadDir, { recursive: true });
-  const app = buildApp({ db, logLevel: config.logLevel, serveClient: import.meta.url.endsWith('.js'), allowedOrigins: config.allowedOrigins, cookieSecure: config.cookieSecure, projectTimezone: config.projectTimezone, uploadDir: config.uploadDir });
+  const serveClient = import.meta.url.endsWith('.js');
+  const app = buildApp({ db, logLevel: config.logLevel, serveClient, allowedOrigins: config.allowedOrigins, cookieSecure: config.cookieSecure, projectTimezone: config.projectTimezone, uploadDir: config.uploadDir });
+  if (serveClient) {
+    const { registerStaticClient } = await import('./static-client.js');
+    registerStaticClient(app);
+  }
   app.addHook('onClose', async () => { await db.end(); });
   for (const signal of ['SIGINT', 'SIGTERM'] as const) {
     process.once(signal, () => { void app.close().catch(() => { process.exitCode = 1; }); });

@@ -2,7 +2,6 @@ import { resolve } from 'node:path';
 import type { Pool } from 'pg';
 import Fastify from 'fastify';
 import type { FastifyError } from 'fastify';
-import staticFiles from '@fastify/static';
 import { ZodError } from 'zod';
 import { AppError } from './errors.js';
 import { identityRoutes } from './routes/identity.js';
@@ -63,9 +62,6 @@ export function buildApp({ db, logLevel = 'silent', serveClient = false,
     }
   });
 
-  if (serveClient) {
-    void app.register(staticFiles, { root: resolve('dist/client'), wildcard: false });
-  }
   app.setNotFoundHandler((request, reply) => {
     const pathname = request.url.split('?')[0];
     if (serveClient && request.method === 'GET' && !pathname.startsWith('/api/') && pathname !== '/api' && !pathname.includes('.')) {
