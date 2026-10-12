@@ -22,7 +22,17 @@ function remoteConfig() {
   // Storage memerlukan konteks Authorization untuk akses objek privat.
   // Kunci tetap hanya dikirim dari server ke origin Supabase proyek ini.
   const headers = { apikey: key, Authorization: `Bearer ${key}` };
-  return { base, bucket, headers };
+  return { base, bucket, headers, key };
+}
+
+function assertStorageKey(key: string): void {
+  if (key.startsWith('sb_secret_')) return;
+  let role: unknown;
+  try { role = JSON.parse(Buffer.from(key.split('.')[1] ?? '', 'base64url').toString()).role; }
+  catch { role = null; }
+  if (role !== 'service_role') {
+    throw new AppError(503, 'PHOTO_STORAGE_KEY_NOT_SECRET', 'Penyimpanan foto belum tersedia. Hubungi Administrator.');
+  }
 }
 
 export function assertPhotoStorageReady(): void {
@@ -47,6 +57,7 @@ export async function writePhoto(directory: string, id: string, bytes: Buffer, n
     await writeFile(join(resolve(directory), name), bytes, { flag: 'wx' });
     return;
   }
+  assertStorageKey(remote.key);
   let response: Response;
   try {
     response = await fetch(`${remote.base}/${remote.bucket}/${name}`, {
@@ -57,11 +68,13 @@ export async function writePhoto(directory: string, id: string, bytes: Buffer, n
     throw new AppError(503, 'PHOTO_STORAGE_NETWORK', 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
   }
   if (!response.ok) {
-    const details = await response.json().catch(() => null) as { errorCode?: unknown; error?: unknown } | null;
+    const details = await response.json().catch(() => null) as { errorCode?: unknown; error?: unknown; message?: unknown } | null;
     const rawCode = typeof details?.errorCode === 'string' ? details.errorCode : details?.error;
     const safeCode = typeof rawCode === 'string' && /^[A-Za-z][A-Za-z0-9_]{0,40}$/.test(rawCode)
       ? rawCode.toUpperCase() : 'UNKNOWN';
-    throw new AppError(503, `PHOTO_STORAGE_${response.status}_${safeCode}`, 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
+    const reason = typeof details?.message === 'string' && details.message.includes('row-level security policy')
+      ? '_RLS' : '';
+    throw new AppError(503, `PHOTO_STORAGE_${response.status}_${safeCode}${reason}`, 'Penyimpanan foto belum tersedia. Silakan coba kembali.');
   }
 }
 
@@ -69,6 +82,7 @@ export async function readPhotoBytes(directory: string, id: string, namespace: '
   const name = fileName(id, namespace);
   const remote = remoteConfig();
   if (!remote) return readFile(join(resolve(directory), name));
+  assertStorageKey(remote.key);
   const response = await fetch(`${remote.base}/authenticated/${remote.bucket}/${name}`, {
     headers: remote.headers, signal: AbortSignal.timeout(30000),
   });
@@ -84,6 +98,7 @@ export async function removePhoto(directory: string, id: string, namespace: '' |
     catch (error) { if (!(typeof error === 'object' && error && 'code' in error && error.code === 'ENOENT')) throw error; }
     return;
   }
+  assertStorageKey(remote.key);
   const response = await fetch(`${remote.base}/${remote.bucket}/${name}`, {
     method: 'DELETE', headers: remote.headers, signal: AbortSignal.timeout(30000),
   });
