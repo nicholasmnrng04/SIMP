@@ -12,5 +12,5 @@
     "verbatimModuleSyntax": true,
     "types": ["node"]
   },
-  "include": ["api", "server", "shared", "tests/*.test.ts", "tests/helpers.ts", "tests/support", "scripts/*.ts"]
+  "include": ["server", "shared", "tests/*.test.ts", "tests/helpers.ts", "tests/support", "scripts/*.ts"]
 }

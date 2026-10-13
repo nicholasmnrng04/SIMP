@@ -20,7 +20,7 @@ export function openDatabase(connectionString: string, schema = 'public'): Pool 
   }
   const pool = new pg.Pool({
     connectionString: poolUrl, ...(ssl ? { ssl } : {}),
-    max: process.env.VERCEL ? 1 : 5, connectionTimeoutMillis: 5000, idleTimeoutMillis: 10000,
+    max: 5, connectionTimeoutMillis: 5000, idleTimeoutMillis: 10000,
     statement_timeout: 15000, options: `-c search_path=${schema} -c timezone=UTC`,
     application_name: 'simp-prototype',
   });

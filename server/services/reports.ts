@@ -144,19 +144,8 @@ export async function normalizePhoto(data: string, mime: string): Promise<Buffer
     const decoder = sharp(buffer,{limitInputPixels:20000000,failOn:'warning'}), metadata = await decoder.metadata();
     if (!['jpeg','png'].includes(metadata.format ?? '') || (metadata.pages ?? 1)>1) throw new Error('format');
     const result = await decoder.rotate().flatten({background:'#ffffff'}).jpeg({quality:85}).toBuffer();
-    if (!process.env.VERCEL) {
-      if (result.length>photoLimit) throw new Error('size');
-      return result;
-    }
-    const responseLimit = 3 * 1024 * 1024;
-    if (result.length<=responseLimit) return result;
-    for (const quality of [75, 65, 55]) {
-      const reduced = await sharp(buffer,{limitInputPixels:20000000,failOn:'warning'})
-        .rotate().resize({width:3000,height:3000,fit:'inside',withoutEnlargement:true})
-        .flatten({background:'#ffffff'}).jpeg({quality}).toBuffer();
-      if (reduced.length<=responseLimit) return reduced;
-    }
-    throw new Error('size');
+    if (result.length>photoLimit) throw new Error('size');
+    return result;
   } catch { throw fail('Foto rusak, bergerak, terlalu besar, atau melebihi 20 juta piksel. Gunakan JPEG/PNG yang valid.'); }
 }
 async function removeFile(directory: string,id: string) { try { await removePhoto(directory,id); } catch { console.warn('Berkas foto tidak lagi dirujuk tetapi belum dapat dibersihkan.'); } }

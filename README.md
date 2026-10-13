@@ -1,5 +1,7 @@
 # SIMP — Prototype
 
+Branch `main` menjalankan SIMP secara lokal dengan PostgreSQL dan foto pada disk komputer. Branch `demo` berisi adapter Vercel, konfigurasi Supabase, serta panduan deployment. Perubahan fitur bersama perlu diterapkan ke kedua branch secara selektif; lihat [panduan branch](docs/branches.md).
+
 Panduan demo lengkap: [docs/demo-guide.md](docs/demo-guide.md). Bukti penerimaan akhir: [docs/acceptance-results.md](docs/acceptance-results.md). Untuk data pekerjaan contoh, gunakan **Daftar Pekerjaan → Lihat Pekerjaan dari Workbook TS** pada proyek kosong: 7 kelompok dan 38 item dari workbook, disimpan ke PostgreSQL setelah dikonfirmasi.
 
 Prototype Sistem Informasi Monitoring Proyek berdasarkan [PRD](prd.md). T00–T11 menyediakan login/pengguna, proyek/tim, pekerjaan/bobot, rencana terversi, laporan harian, foto privat, pemeriksaan, persetujuan, koreksi terversi, kemajuan resmi, rekap, dokumentasi, riwayat, serta delapan keluaran web/PDF/XLSX. Setelah masuk, pilih proyek lalu gunakan delapan tujuan langsung: **Ringkasan**, **Laporan Harian**, **Rekap & Unduhan**, **Daftar Pekerjaan**, **Jadwal & Target**, **Dokumentasi**, **Tim**, dan **Informasi Proyek**. Panduan navigasi ada di [docs/ui-ux.md](docs/ui-ux.md), pedoman visual ada di [docs/design-system.md](docs/design-system.md), dan penjelasan bobot serta kurva-S ada di [docs/Penjelasan-rumus.md](docs/Penjelasan-rumus.md).
@@ -155,5 +157,3 @@ Detail: [arsitektur](docs/architecture.md), [keputusan prototype](docs/decisions
 Ekspor T10: pilih proyek lalu buka **Laporan → Rekap** untuk membaca hasil dan mengakses delapan jenis keluaran. Lihat [panduan ekspor](docs/ekspor.md) untuk format, batas presisi dan perbandingan workbook contoh.
 
 Formulir ekspor kini mengikuti layout workbook H0/M1/B1/TS, termasuk kop, kelompok kolom dan pengaturan cetak. Logo contoh dapat dinonaktifkan pada formulir ekspor.
-#   S I M P  
- 
